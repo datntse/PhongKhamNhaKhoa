@@ -3,9 +3,7 @@ using Clinic.Core.Constants;
 using Clinic.Core.Models;
 using Clinic.Infracstruture.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 
 namespace Clinic.API.Controllers
@@ -83,7 +81,7 @@ namespace Clinic.API.Controllers
         [HttpPost("refresh-token")]
         public async Task<IActionResult> refeshToken(string refreshToken)
         {
-            var userId =  _currentUserService.GetUserId();
+            var userId = _currentUserService.GetUserId();
             var user = await _userService.FindAsync(userId);
             if (user == null || !(user.Status != 0) || user.RefreshToken != refreshToken || user.DateExpireRefreshToken < DateTime.UtcNow)
             {

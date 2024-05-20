@@ -1,14 +1,10 @@
-﻿using Clinic.Infracstruture.Data;
+﻿using Clinic.Infracstructure.Services;
+using Clinic.Infracstruture.Data;
 using Clinic.Infracstruture.Repositories;
 using Clinic.Infracstruture.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace Clinic.Infracstruture
@@ -25,10 +21,13 @@ namespace Clinic.Infracstruture
             });
             #region entity
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-      
+
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
+
+            services.AddScoped<IClinicRepository, ClinicRepository>();
+            services.AddScoped<IClinicService, ClinicService>();
             #endregion
             return services;
         }
