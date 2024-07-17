@@ -221,8 +221,9 @@ namespace Clinic.Infracstructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CloseTime")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("CloseTime")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
@@ -240,8 +241,9 @@ namespace Clinic.Infracstructure.Migrations
                     b.Property<string>("OnwerId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("OpenTime")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("OpenTime")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SlotDuration")
                         .HasColumnType("int");
