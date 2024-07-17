@@ -15,8 +15,8 @@ namespace Clinic.Core.Entities
         public String Id { get; set; }
         public String Name { get; set; }
         public String Address { get; set; }
-        public DateTime OpenTime { get; set; }
-        public DateTime CloseTime { get; set; }
+        public String OpenTime { get; set; }
+        public String CloseTime { get; set; }
         public int SlotDuration { get; set; }
         public int MaxPatientsPerSlot { get; set; }
         public int MaxTreatmentPerSlot { get; set; }

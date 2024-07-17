@@ -81,10 +81,10 @@ namespace Clinic.API.Controllers
 
         [AllowAnonymous]
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> refeshToken(string refreshToken)
+        public async Task<IActionResult> refeshToken(string refreshToken, string userId)
         {
-            var userId =  _currentUserService.GetUserId();
-            var user = await _userService.FindAsync(userId);
+            var _userId = Guid.Parse(userId);
+            var user = await _userService.FindAsync(_userId);
             if (user == null || !(user.Status != 0) || user.RefreshToken != refreshToken || user.DateExpireRefreshToken < DateTime.UtcNow)
             {
                 return BadRequest(new Message

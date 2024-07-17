@@ -1,4 +1,6 @@
-﻿using Clinic.Infracstruture.Data;
+﻿using Clinic.Infracstructure.Repositories;
+using Clinic.Infracstructure.Services;
+using Clinic.Infracstruture.Data;
 using Clinic.Infracstruture.Repositories;
 using Clinic.Infracstruture.Services;
 using Microsoft.EntityFrameworkCore;
@@ -25,10 +27,22 @@ namespace Clinic.Infracstruture
             });
             #region entity
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-      
+
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
+
+
+            services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IRoleService, RoleSerivce>();
+
+            services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+            services.AddScoped<IAppointmentService, AppointmentService>();
+
+            services.AddScoped<IDentistRepository, DentistRepository>();
+
+            services.AddScoped<IClinicDentalRepostiroy, ClinicDentalRepostiroy>();
+
             #endregion
             return services;
         }
