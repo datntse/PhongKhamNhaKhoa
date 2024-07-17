@@ -27,7 +27,7 @@ namespace Clinic.Infracstruture
             });
             #region entity
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-      
+
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
@@ -37,6 +37,17 @@ namespace Clinic.Infracstruture
 
             services.AddScoped<IDentistInfoRepository,DentistInfoRepository>();
             services.AddScoped<IDentistInfoService,DentistInfoService>();
+
+            services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IRoleService, RoleSerivce>();
+
+            services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+            services.AddScoped<IAppointmentService, AppointmentService>();
+
+            services.AddScoped<IDentistRepository, DentistRepository>();
+
+            services.AddScoped<IClinicDentalRepostiroy, ClinicDentalRepostiroy>();
+
             #endregion
             return services;
         }

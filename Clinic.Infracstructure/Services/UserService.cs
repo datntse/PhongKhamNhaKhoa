@@ -172,7 +172,7 @@ namespace Clinic.Infracstruture.Services
 
         public void Update(ApplicationUser user)
         {
-             _userRepository.Update(user);
+            _userRepository.Update(user);
         }
 
         public async Task<IList<string>> GetRolesAsync(ApplicationUser user)
@@ -190,7 +190,8 @@ namespace Clinic.Infracstruture.Services
                 if (userRoles.Contains(AppRole.Admin))
                 {
                     listUser.Remove(user);
-                } else
+                }
+                else
                 {
                     var userRolesVM = _mapper.Map<UserRolesVM>(user);
                     userRolesVM.RolesName = userRoles.ToList();
