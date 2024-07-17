@@ -46,7 +46,7 @@ namespace Clinic.Infracstructure.Services
 
         public async Task<Appointment> GetAppointmentById(string id)
         {
-            return await _appointmentRepository.FindAsync(Guid.Parse(id));
+            return await _appointmentRepository.FindAsync(id);
         }
 
         public async Task<Appointment> CreateAppointment(AppointmentDTO appointmentDto)
@@ -86,7 +86,7 @@ namespace Clinic.Infracstructure.Services
 
         public async Task<Appointment> UpdateAppointment(string id, AppointmentDTO appointmentDto)
         {
-            var appointment = await _appointmentRepository.FindAsync(Guid.Parse(id));
+            var appointment = await _appointmentRepository.FindAsync(id);
             if (appointment == null)
             {
                 return null;
@@ -111,7 +111,7 @@ namespace Clinic.Infracstructure.Services
 
         public async Task<bool> DeleteAppointment(string id)
         {
-            var appointment = await _appointmentRepository.FindAsync(Guid.Parse(id));
+            var appointment = await _appointmentRepository.FindAsync(id);
             if (appointment == null)
             {
                 return false;

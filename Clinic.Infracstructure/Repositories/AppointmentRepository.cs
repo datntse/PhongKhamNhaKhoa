@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 namespace Clinic.Infracstructure.Repositories
 {
 
-    public interface IAppointmentRepository : IBaseRepository<Appointment, Guid>
+    public interface IAppointmentRepository : IBaseRepository<Appointment, String>
     {
 
     }
-    public class AppointmentRepository : BaseRepository<Appointment, Guid>, IAppointmentRepository
+    public class AppointmentRepository : BaseRepository<Appointment, String>, IAppointmentRepository
     {
         public AppointmentRepository(ApplicationDbContext applicationDbContext) : base(applicationDbContext)
         {
