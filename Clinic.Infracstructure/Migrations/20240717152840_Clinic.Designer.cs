@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Clinic.Infracstructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240517085316_DbInit")]
-    partial class DbInit
+    [Migration("20240717152840_Clinic")]
+    partial class Clinic
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -241,7 +241,6 @@ namespace Clinic.Infracstructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OnwerId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("OpenTime")
@@ -473,9 +472,7 @@ namespace Clinic.Infracstructure.Migrations
                 {
                     b.HasOne("Clinic.Core.Entities.ApplicationUser", "User")
                         .WithMany("ClinicDentals")
-                        .HasForeignKey("OnwerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("OnwerId");
 
                     b.Navigation("User");
                 });

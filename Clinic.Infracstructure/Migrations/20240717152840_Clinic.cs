@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Clinic.Infracstructure.Migrations
 {
     /// <inheritdoc />
-    public partial class DbInit : Migration
+    public partial class Clinic : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -98,7 +98,7 @@ namespace Clinic.Infracstructure.Migrations
                     Status = table.Column<int>(type: "int", nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    OnwerId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    OnwerId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -367,8 +367,7 @@ namespace Clinic.Infracstructure.Migrations
                 table: "ClinicDentals",
                 column: "OnwerId",
                 principalTable: "Users",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "Id");
         }
 
         /// <inheritdoc />

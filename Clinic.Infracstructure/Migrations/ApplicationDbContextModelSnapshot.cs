@@ -238,7 +238,6 @@ namespace Clinic.Infracstructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OnwerId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("OpenTime")
@@ -470,9 +469,7 @@ namespace Clinic.Infracstructure.Migrations
                 {
                     b.HasOne("Clinic.Core.Entities.ApplicationUser", "User")
                         .WithMany("ClinicDentals")
-                        .HasForeignKey("OnwerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("OnwerId");
 
                     b.Navigation("User");
                 });
