@@ -91,17 +91,17 @@ const string relFrontendOrigins = "RELEASE_FRONTEND_ORIGINS";
 
 builder.Services.AddCors(options =>
 {
-    //options.AddPolicy(name: devFrontendOrigins, builder =>
-    //{
-    //    builder.WithOrigins("http://localhost:5173")
-    //    .AllowAnyHeader()
-    //    .AllowAnyMethod()
-    //    .AllowCredentials();
-    //});
     options.AddPolicy(name: relFrontendOrigins, builder =>
     {
         builder
         .WithOrigins("https://dental-booking-app.anhthuyen.tech")
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
+    });
+    options.AddPolicy(name: devFrontendOrigins, builder =>
+    {
+        builder.WithOrigins("http://localhost:5173")
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials();
@@ -120,7 +120,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors(relFrontendOrigins);
-//app.UseCors(devFrontendOrigins);
+app.UseCors(devFrontendOrigins);
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
