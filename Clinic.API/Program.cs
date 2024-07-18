@@ -120,7 +120,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors(relFrontendOrigins);
-app.UseCors(devFrontendOrigins);
+//app.UseCors(devFrontendOrigins);
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
