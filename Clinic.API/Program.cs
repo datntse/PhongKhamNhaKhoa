@@ -119,8 +119,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors(devFrontendOrigins);
 app.UseCors(relFrontendOrigins);
+app.UseCors(devFrontendOrigins);
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
