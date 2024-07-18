@@ -101,7 +101,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: relFrontendOrigins, builder =>
     {
         builder
-        .WithOrigins("https://dental-booking-app.anhthuyen.tech/")
+        .WithOrigins("https://dental-booking-app.anhthuyen.tech")
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials();
@@ -119,6 +119,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(devFrontendOrigins);
+app.UseCors(relFrontendOrigins);
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
@@ -126,7 +128,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.UseCors(devFrontendOrigins);
-app.UseCors(relFrontendOrigins);
 
 app.Run();
