@@ -91,13 +91,13 @@ const string relFrontendOrigins = "RELEASE_FRONTEND_ORIGINS";
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: devFrontendOrigins, builder =>
-    {
-        builder.WithOrigins("http://localhost:5173")
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials();
-    });
+    //options.AddPolicy(name: devFrontendOrigins, builder =>
+    //{
+    //    builder.WithOrigins("http://localhost:5173")
+    //    .AllowAnyHeader()
+    //    .AllowAnyMethod()
+    //    .AllowCredentials();
+    //});
     options.AddPolicy(name: relFrontendOrigins, builder =>
     {
         builder
