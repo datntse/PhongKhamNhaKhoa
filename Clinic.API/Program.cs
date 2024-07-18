@@ -92,7 +92,11 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: frontendOrigins, policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "https://dental-booking-app.anhthuyen.tech");
+        policy.WithOrigins("http://localhost:5173", "https://dental-booking-app.anhthuyen.tech")
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials()
+        .Build();
     });
 });
 
