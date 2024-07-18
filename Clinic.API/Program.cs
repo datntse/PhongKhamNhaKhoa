@@ -86,6 +86,16 @@ builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 builder.Services.AddHttpContextAccessor();
 
+const string frontendOrigins = "FRONTEND_ORIGINS";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: frontendOrigins, policy =>
+    {
+        policy.WithOrigins("http://localhost:5173", "https://dental-booking-app.anhthuyen.tech");
+    });
+});
+
 var app = builder.Build();
 
 
@@ -104,5 +114,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.UseCors(frontendOrigins);
 
 app.Run();

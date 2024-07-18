@@ -17,7 +17,6 @@ FROM build as publish
 ARG updateDb
 ARG BUILD_CONFIGURATION=Development
 RUN dotnet publish "Clinic.API.csproj" -c ${BUILD_CONFIGURATION} -o /app/publish
-RUN if [[ -n ${updateDb} ]] dotnet ef database update
 
 FROM base as final
 WORKDIR /app

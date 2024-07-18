@@ -8,5 +8,5 @@ services:
       - 1224:1433
     environment:
       - MSSQL_SA_PASSWORD=clinic@BE123
-      - ACCEP_EULA=Y
+      - ACCEPT_EULA=Y
       - MSSQL_PID=Express
