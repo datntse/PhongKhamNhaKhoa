@@ -52,4 +52,9 @@ pipeline {
             }
         }
     }
+    post {
+        success {
+            build job: 'remove-docker-image', parameters: [string(name: 'IMAGE_NAME', value: 'clinic-be'), string(name: 'COMMIT_ID', value: '${env.COMMIT_ID}')]
+        }
+    }
 }
