@@ -47,10 +47,9 @@ pipeline {
                 }
             }
             steps {
-                echo 'Deploying HTMS';
                 script {
                     sh  """
-                            if [[ -z "${params.BUILD_NUM} "]]; then
+                            if [[ -z "${params.BUILD_NUM}" ]]; then
                                 echo "BUILD_NUM is required";
                                 exit -1;
                             fi
