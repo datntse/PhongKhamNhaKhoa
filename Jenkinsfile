@@ -17,36 +17,17 @@ pipeline {
         )
     }
     stages {
-        stage('Checkout SCM') {
-            steps {
-                deleteDir();
-                echo 'Check out Git'
-                script {
-                    env.COMMIT_ID = checkout(scm).GIT_COMMIT
-                }
-            }
-        }
         stage('Build QuanLyPhongKhamNhaKhoa') {
             steps {
                 sh """
-                    docker build -t clinic-be:${env.COMMIT_ID} .
+                    docker build -t clinic-be:${env.BUILD_NUMBER} .
                 """
                 script {
-                    currentBuild.description = sh(
-                            script: "docker image ls | grep clinic-be | awk \'{print \$2}\'",
+                    currentBuild.description = $sh(
+                            script: "image_id: $(docker image ls | grep clinic-be:${env.BUILD_NUMBER} | awk \'{print \$3}\')",
                             returnStdout: true
                     ).trim()
                 }
-            }
-        }
-        stage('Delete old build') {
-            when {
-                expression {
-                    return params.DEL_OLD_IMG
-                }
-            }
-            steps {
-                build job: 'remove-docker-image', parameters: [string(name: 'IMAGE_NAME', value: 'clinic-be'), string(name: 'COMMIT_ID', value: '${env.COMMIT_ID}')]
             }
         }
         stage('Deploy') {
@@ -64,6 +45,16 @@ pipeline {
                             docker run --publish 7210:80 --detach --restart=always --name clinic-be clinic-be:${env.COMMIT_ID}
                         """
                 }
+            }
+        }
+        stage('Delete old build') {
+            when {
+                expression {
+                    return params.DEL_OLD_IMG
+                }
+            }
+            steps {
+                build job: 'remove-docker-image', parameters: [string(name: 'IMAGE_NAME', value: 'clinic-be'), string(name: 'COMMIT_ID', value: '${env.BUILD_NUMBER}')]
             }
         }
     }
