@@ -5,6 +5,11 @@ pipeline {
         label 'Host'
     }
     parameters {
+        string(
+                name: 'BUILD_NUMBER',
+                defaultValue: '',
+                description: 'Deploy target'
+        )
         booleanParam(
                 name: 'Deploy',
                 defaultValue: false,
@@ -18,6 +23,11 @@ pipeline {
     }
     stages {
         stage('Build QuanLyPhongKhamNhaKhoa') {
+            when{
+                expression {
+                    return !params.Deploy
+                }
+            }
             steps {
                 sh """
                     docker build -t clinic-be:${env.BUILD_NUMBER} .
@@ -50,7 +60,7 @@ pipeline {
         stage('Delete old build') {
             when {
                 expression {
-                    return params.DEL_OLD_IMG
+                    return params.DEL_OLD_IMG && !params.Deploy
                 }
             }
             steps {
