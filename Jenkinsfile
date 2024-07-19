@@ -12,6 +12,15 @@ pipeline {
         )
     }
     stages {
+        stage('Checkout SCM') {
+            steps {
+                deleteDir();
+                echo 'Check out Git'
+                script {
+                    env.COMMIT_ID = checkout(scm).GIT_COMMIT
+                }
+            }
+        }
         stage('Build QuanLyPhongKhamNhaKhoa') {
             steps {
                 sh """
