@@ -25,7 +25,7 @@ pipeline {
         stage('Build QuanLyPhongKhamNhaKhoa') {
             steps {
                 sh """
-                    docker build -t clinic-be"${env.COMMIT_ID} .
+                    docker build -t clinic-be:${env.COMMIT_ID} .
                 """
                 script {
                     currentBuild.description = sh(
