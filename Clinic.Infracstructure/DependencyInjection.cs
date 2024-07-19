@@ -44,9 +44,6 @@ namespace Clinic.Infracstruture
             services.AddScoped<IAppointmentRepository, AppointmentRepository>();
             services.AddScoped<IAppointmentService, AppointmentService>();
 
-            services.AddScoped<IDentistRepository, DentistRepository>();
-
-            services.AddScoped<IClinicDentalRepostiroy, ClinicDentalRepostiroy>();
 
             #endregion
             return services;

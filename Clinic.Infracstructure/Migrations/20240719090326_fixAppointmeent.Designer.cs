@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Clinic.Infracstructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240717170105_Clinic")]
-    partial class Clinic
+    [Migration("20240719090326_fixAppointmeent")]
+    partial class fixAppointmeent
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -159,21 +159,28 @@ namespace Clinic.Infracstructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("DentistId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<DateTime>("EndAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("PeriodicInterval")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("StartAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("datetime2");

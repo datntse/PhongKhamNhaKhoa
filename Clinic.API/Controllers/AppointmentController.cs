@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Clinic.API.Controllers
 {
+    [ApiController]
     [Route("api/appointment")]
     public class AppointmentController : ControllerBase
     {

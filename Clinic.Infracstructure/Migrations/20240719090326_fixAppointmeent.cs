@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Clinic.Infracstructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Clinic : Migration
+    public partial class fixAppointmeent : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -69,10 +69,12 @@ namespace Clinic.Infracstructure.Migrations
                     ClinicId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CustomerId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DentistId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
+                    StartAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PeriodicInterval = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),

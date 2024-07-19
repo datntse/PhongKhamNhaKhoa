@@ -21,14 +21,14 @@ namespace Clinic.Infracstructure.Services
     public class AppointmentService : IAppointmentService
     {
         private IAppointmentRepository _appointmentRepository;
-        private IClinicDentalRepostiroy _clinicRepository;
-        private IDentistRepository _dentistRepository;
+        private IClinicDentalsRepository _clinicRepository;
+        private IDentistInfoRepository _dentistRepository;
         private IUnitOfWork _unitOfWork;
 
         public AppointmentService(
             IAppointmentRepository appointmentRepository,
-            IClinicDentalRepostiroy clinicRepository,
-            IDentistRepository dentistRepository,
+            IClinicDentalsRepository clinicRepository,
+            IDentistInfoRepository dentistRepository,
             IUnitOfWork unitOfWork)
         {
             _appointmentRepository = appointmentRepository;
@@ -51,8 +51,8 @@ namespace Clinic.Infracstructure.Services
 
         public async Task<Appointment> CreateAppointment(AppointmentDTO appointmentDto)
         {
-            var clinic = await _clinicRepository.FindAsync(Guid.Parse(appointmentDto.ClinicId));
-            var dentist = await _dentistRepository.FindAsync(Guid.Parse(appointmentDto.DentistId));
+            var clinic = await _clinicRepository.FindAsync(appointmentDto.ClinicId);
+            var dentist = await _dentistRepository.FindAsync(appointmentDto.DentistId);
 
             if (clinic == null || dentist == null)
             {
@@ -60,7 +60,8 @@ namespace Clinic.Infracstructure.Services
             }
 
             // Check if the requested appointment time is available
-            if (!await IsAppointmentTimeAvailable(appointmentDto.Date, appointmentDto.ClinicId, appointmentDto.DentistId))
+            // buggggg 
+            if (!await IsAppointmentTimeAvailable(appointmentDto.StartAt, appointmentDto.ClinicId, appointmentDto.DentistId))
             {
                 throw new Exception("The requested appointment time is not available.");
             }
@@ -71,7 +72,7 @@ namespace Clinic.Infracstructure.Services
                 ClinicId = appointmentDto.ClinicId,
                 CustomerId = appointmentDto.CustomerId,
                 DentistId = appointmentDto.DentistId,
-                Date = appointmentDto.Date,
+                StartAt = appointmentDto.StartAt,
                 Type = appointmentDto.Type,
                 PeriodicInterval = appointmentDto.PeriodicInterval,
                 Status = (int)AppointmentStatus.Pending,
@@ -93,12 +94,13 @@ namespace Clinic.Infracstructure.Services
             }
 
             // Check if the requested appointment time is available
-            if (!await IsAppointmentTimeAvailable(appointmentDto.Date, appointment.ClinicId, appointment.DentistId))
+            if (!await IsAppointmentTimeAvailable(appointmentDto.StartAt, appointment.ClinicId, appointment.DentistId))
             {
                 throw new Exception("The requested appointment time is not available.");
             }
 
-            appointment.Date = appointmentDto.Date;
+            appointment.StartAt = appointmentDto.StartAt;
+            appointment.EndAt = appointmentDto.EndAt;
             appointment.Type = appointmentDto.Type;
             appointment.PeriodicInterval = appointmentDto.PeriodicInterval;
             appointment.UpdateAt = DateTime.UtcNow;
@@ -125,15 +127,15 @@ namespace Clinic.Infracstructure.Services
 
         private async Task<bool> IsAppointmentTimeAvailable(DateTime date, string clinicId, string dentistId)
         {
-            var existingAppointments = await _appointmentRepository.GetAll()
-                .Where(a => a.ClinicId == clinicId && a.DentistId == dentistId && a.Date == date)
-                .CountAsync();
+            //var existingAppointments = await _appointmentRepository.GetAll()
+            //    .Where(a => a.ClinicId == clinicId && a.DentistId == dentistId && a.StartAt == date)
+            //    .CountAsync();
 
-            var clinic = await _clinicRepository.FindAsync(Guid.Parse(clinicId));
-            if (existingAppointments >= clinic.MaxPatientsPerSlot)
-            {
-                return false;
-            }
+            //var clinic = await _clinicRepository.FindAsync(clinicId);
+            //if (existingAppointments >= clinic.MaxPatientsPerSlot)
+            //{
+            //    return false;
+            //}
 
             return true;
         }
