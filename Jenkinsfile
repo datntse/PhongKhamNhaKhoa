@@ -6,7 +6,7 @@ pipeline {
     }
     parameters {
         string(
-                name: 'BUILD_NUMBER',
+                name: 'BUILD_NUM',
                 defaultValue: '',
                 description: 'Deploy target'
         )
@@ -50,13 +50,13 @@ pipeline {
                 echo 'Deploying HTMS';
                 script {
                     sh  """
-                            if [[ -z "${params.BUILD_NUMBER} "]]; then
-                                echo "BUILD_NUMBER is required";
+                            if [[ -z "${params.BUILD_NUM} "]]; then
+                                echo "BUILD_NUM is required";
                                 exit -1;
                             fi
                             docker stop clinic-be || true
                             docker rm clinic-be || true
-                            docker run --publish 7210:80 --detach --restart=always --name clinic-be clinic-be:${params.BUILD_NUMBER}
+                            docker run --publish 7210:80 --detach --restart=always --name clinic-be clinic-be:${params.BUILD_NUM}
                         """
                 }
             }
