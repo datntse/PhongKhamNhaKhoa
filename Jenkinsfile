@@ -10,6 +10,11 @@ pipeline {
                 defaultValue: false,
                 description: 'Deploy HTMS to docker'
         )
+        booleanParam(
+                name: 'DEL_OLD_IMG',
+                defaultValue: true,
+                description: 'Only keep newest build'
+        )
     }
     stages {
         stage('Checkout SCM') {
@@ -26,6 +31,22 @@ pipeline {
                 sh """
                     docker build -t clinic-be:${env.COMMIT_ID} .
                 """
+                script {
+                    currentBuild.description = sh(
+                            script: "docker image ls | grep clinic-be | awk \'{print \$2}\'",
+                            returnStdout: true
+                    ).trim()
+                }
+            }
+        }
+        stage('Delete old build') {
+            when {
+                expression {
+                    return params.DEL_OLD_IMG
+                }
+            }
+            steps {
+                build job: 'remove-docker-image', parameters: [string(name: 'IMAGE_NAME', value: 'clinic-be'), string(name: 'COMMIT_ID', value: '${env.COMMIT_ID}')]
             }
         }
         stage('Deploy') {
@@ -43,17 +64,6 @@ pipeline {
                             docker run --publish 7210:80 --detach --restart=always --name clinic-be clinic-be:${env.COMMIT_ID}
                         """
                 }
-            }
-        }
-    }
-    post {
-        success {
-            build job: 'remove-docker-image', parameters: [string(name: 'IMAGE_NAME', value: 'clinic-be'), string(name: 'COMMIT_ID', value: '${env.COMMIT_ID}')]
-            script {
-                currentBuild.description = sh(
-                        script: "docker image ls | grep clinic-be | awk \'{print \$3}\'",
-                        returnStdout: true
-                ).trim()
             }
         }
     }
