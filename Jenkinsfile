@@ -5,7 +5,6 @@ pipeline {
         label 'Host'
     }
     parameters {
-        string(name: 'BRANCH', defaultValue: 'containerise')
         booleanParam(
                 name: 'Deploy',
                 defaultValue: false,
@@ -13,15 +12,6 @@ pipeline {
         )
     }
     stages {
-        stage('Checkout SCM') {
-            steps {
-                deleteDir();
-                echo 'Check out Git'
-                script {
-                    env.COMMIT_ID = checkout(scm).GIT_COMMIT
-                }
-            }
-        }
         stage('Build QuanLyPhongKhamNhaKhoa') {
             steps {
                 sh """
