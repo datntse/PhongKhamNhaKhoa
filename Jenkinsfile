@@ -23,7 +23,7 @@ pipeline {
                     docker build -t clinic-be:${env.BUILD_NUMBER} .
                 """
                 script {
-                    currentBuild.description = "image_id -> " + $sh(
+                    currentBuild.description = "image_id -> " + sh(
                             script: "docker image ls | grep clinic-be:${env.BUILD_NUMBER} | awk \'{print \$3}\'",
                             returnStdout: true
                     ).trim()
