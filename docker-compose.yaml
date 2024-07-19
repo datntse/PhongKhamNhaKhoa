@@ -1,0 +1,12 @@
+version: '3'
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: sqlserver
+    hostname: sqlserver
+    ports:
+      - 1224:1433
+    environment:
+      - MSSQL_SA_PASSWORD=clinic@BE123
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Express
