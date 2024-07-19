@@ -54,7 +54,7 @@ pipeline {
                 }
             }
             steps {
-                build job: 'remove-docker-image', parameters: [string(name: 'IMAGE_NAME', value: 'clinic-be'), string(name: 'BUILD_NUM', value: '${env.BUILD_NUMBER}')]
+                build job: 'remove-docker-image', parameters: [string(name: 'IMAGE_NAME', value: 'clinic-be'), string(name: 'BUILD_NUM', value: "${env.BUILD_NUMBER}")]
             }
         }
     }
