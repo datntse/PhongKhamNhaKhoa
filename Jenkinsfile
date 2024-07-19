@@ -23,8 +23,8 @@ pipeline {
                     docker build -t clinic-be:${env.BUILD_NUMBER} .
                 """
                 script {
-                    currentBuild.description = "image_id -> " + sh(
-                            script: "docker image ls | grep clinic-be:${env.BUILD_NUMBER} | awk \'{print \$3}\'",
+                    currentBuild.description = "image_id -> clinic-be:" + sh(
+                            script: "docker image ls | grep clinic-be | grep ${env.BUILD_NUMBER} | awk \'{print \$2}\'",
                             returnStdout: true
                     ).trim()
                 }
@@ -54,7 +54,7 @@ pipeline {
                 }
             }
             steps {
-                build job: 'remove-docker-image', parameters: [string(name: 'IMAGE_NAME', value: 'clinic-be'), string(name: 'COMMIT_ID', value: '${env.BUILD_NUMBER}')]
+                build job: 'remove-docker-image', parameters: [string(name: 'IMAGE_NAME', value: 'clinic-be'), string(name: 'BUILD_NUM', value: '${env.BUILD_NUMBER}')]
             }
         }
     }
