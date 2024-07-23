@@ -5,9 +5,11 @@ using Clinic.Infracstruture.Data;
 using Clinic.Infracstruture.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,7 +20,10 @@ namespace Clinic.Infracstructure.Services
         Task<IQueryable<Dentist>> GetAll();
         Task AddAsync(Dentist dentist);
         Task<Dentist> FindAsync(String id);
-        void Update(Dentist x);
+		IQueryable<Dentist> Get(Expression<Func<Dentist, bool>> where);
+		IQueryable<Dentist> Get(Expression<Func<Dentist, bool>> where, params Expression<Func<Dentist, object>>[] includes);
+		IQueryable<Dentist> Get(Expression<Func<Dentist, bool>> where, Func<IQueryable<Dentist>, IIncludableQueryable<Dentist, object>> include = null);
+		void Update(Dentist x);
         Task<bool> Remove(String id);
         Task<Dentist> CreateDentistInfo(DentistDTO dentistDTO);
         Task<IdentityResult> DeleteDentist(String id);
@@ -78,14 +83,27 @@ namespace Clinic.Infracstructure.Services
         }
 
 
-        public async Task<Dentist> FindAsync(String id)
-        {
-            return await _dentistInfoRepository.FindAsync(id);
-        }
+		public async Task<Dentist> FindAsync(string id)
+		{
+			var dentist = await _dentistInfoRepository.Get(d => d.Id.Equals(id))
+				.Include(d => d.ClinicDental)
+				.Include(d => d.Appointments)
+				.FirstOrDefaultAsync();
 
-        public async Task<IQueryable<Dentist>> GetAll()
+			if (dentist == null)
+			{
+				throw new KeyNotFoundException("Dentist not found.");
+			}
+
+			return dentist;
+		}
+
+
+		public async Task<IQueryable<Dentist>> GetAll()
         {
-            var listDentist = _dentistInfoRepository.GetAll();
+            var listDentist = _dentistInfoRepository.GetAll()
+                .Include(c=>c.ClinicDental)
+                .Include(c=>c.Appointments);
 
             if (listDentist == null || !listDentist.Any())
             {
@@ -144,5 +162,19 @@ namespace Clinic.Infracstructure.Services
             return IdentityResult.Failed(new IdentityError { Description = "Could not delete dentist." });
         }
 
-    }
+		public IQueryable<Dentist> Get(Expression<Func<Dentist, bool>> where)
+		{
+			return _dentistInfoRepository.Get(where);
+		}
+
+		public IQueryable<Dentist> Get(Expression<Func<Dentist, bool>> where, params Expression<Func<Dentist, object>>[] includes)
+		{
+			return _dentistInfoRepository.Get(where, includes);
+		}
+
+		public IQueryable<Dentist> Get(Expression<Func<Dentist, bool>> where, Func<IQueryable<Dentist>, IIncludableQueryable<Dentist, object>> include = null)
+		{
+			return _dentistInfoRepository.Get(where, include);
+		}
+	}
 }
