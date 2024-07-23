@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Clinic.Core.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,6 +23,7 @@ namespace Clinic.Core.Models
         [Required]
         public string Password { get; set; }
         public bool IsAdmin { get; set; } = false;
+        public bool IsDentist { get; set; } = false;
         public String? DOB { get; set; }
         [StringLength(10)]
         public String? PhoneNumber { get; set; }
@@ -29,9 +32,14 @@ namespace Clinic.Core.Models
         // default Status = 1;
         public int Status { get; set; } = 1;
     }
+    public class UserRoles : ApplicationUser
+    {
+        public List<string> RolesName { get; set; }
+    }
 
     public class UserRolesVM
     {
+        public string Id { get;set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
@@ -42,6 +50,7 @@ namespace Clinic.Core.Models
         public bool Sex { get; set; }
         public int Status { get; set; } = 1;
     }
+
 
     public class UserSignIn
     {

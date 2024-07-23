@@ -2,6 +2,7 @@
 using Clinic.Core.Models;
 using Clinic.Infracstructure.Repositories;
 using Clinic.Infracstruture.Data;
+using Clinic.Infracstruture.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -26,12 +27,16 @@ namespace Clinic.Infracstructure.Services
     }
     public class DentistInfoService : IDentistInfoService
     {
+        private readonly IUserRepository _userRepository;
         private readonly IDentistInfoRepository _dentistInfoRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IClinicDentalsRepository _clinicDentalsRepository;
 
-        public DentistInfoService(IDentistInfoRepository dentistInfoRepository, IUnitOfWork unitOfWork, IClinicDentalsRepository clinicDentalsRepository)
+        public DentistInfoService(IDentistInfoRepository dentistInfoRepository, 
+            IUnitOfWork unitOfWork, IClinicDentalsRepository clinicDentalsRepository,
+            IUserRepository userRepository)
         {
+            _userRepository = userRepository;
             _dentistInfoRepository = dentistInfoRepository;
             _unitOfWork = unitOfWork;
             _clinicDentalsRepository = clinicDentalsRepository;
@@ -60,6 +65,11 @@ namespace Clinic.Infracstructure.Services
                 CreateAt = DateTime.Now,
                 ClinicDentalId = dentistDTO.ClinicDentalId
             };
+
+            var dentistUser = await _userRepository.FindAsync(dentistDTO.UserId);
+            dentistUser.Dentist = dentist;
+
+             _userRepository.Update(dentistUser);
 
             await _dentistInfoRepository.AddAsync(dentist);
             await _unitOfWork.SaveChangeAsync();

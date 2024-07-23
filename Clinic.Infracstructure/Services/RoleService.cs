@@ -26,6 +26,8 @@ namespace Clinic.Infracstructure.Services
         Task<IdentityResult> DeleteRole(String roleName);
         Task<IdentityResult> AddRoleUser(List<string> roleNames, String userId);
         Task<String[]> GetUserRole(String userId);
+        Task<List<UserRolesVM>> GetListUsers();
+
     }
 
     public class RoleSerivce : IRoleService
@@ -147,6 +149,29 @@ namespace Clinic.Infracstructure.Services
                 return userRoles;
             }
             return null;
+        }
+
+        public async Task<List<UserRolesVM>> GetListUsers()
+        {
+            var userTotal = await _userRepository.GetAll().Select(_ => new UserRoles { Id = _.Id }).ToListAsync();
+            var users = await _userRepository.GetAll().Select(_ => new UserRoles
+            {
+                Id = _.Id,
+                UserName = _.UserName,
+                Email = _.Email,
+                IsActive = _.IsActive,
+                FirstName = _.FirstName,
+                LastName = _.LastName,
+                PhoneNumber = _.PhoneNumber,
+                Address = _.Address
+            }).ToListAsync();
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                user.RolesName = roles.ToList<string>();
+            }
+            var result = users.Select(_ => _mapper.Map<UserRoles, UserRolesVM>(_));
+            return result.ToList();
         }
     }
 }

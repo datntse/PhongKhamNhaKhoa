@@ -73,8 +73,9 @@ namespace Clinic.API.Controllers
             var user = await _currentUserService.GetUser();
             if (user is null)
                 return Unauthorized();
-            user.RefreshToken = null;
-            _userService.Update(user);
+            var currentUser = _userService.Get(_ => _.Id.Equals(user.Id)).FirstOrDefault();
+            currentUser.RefreshToken = null;
+            _userService.Update(currentUser);
             await _userService.SaveChangeAsync();
             return Ok();
         }
@@ -83,8 +84,7 @@ namespace Clinic.API.Controllers
         [HttpPost("refresh-token")]
         public async Task<IActionResult> refeshToken(string refreshToken, string userId)
         {
-            var _userId = Guid.Parse(userId);
-            var user = await _userService.FindAsync(_userId);
+            var user = await _userService.FindAsync(userId);
             if (user == null || !(user.Status != 0) || user.RefreshToken != refreshToken || user.DateExpireRefreshToken < DateTime.UtcNow)
             {
                 return BadRequest(new Message

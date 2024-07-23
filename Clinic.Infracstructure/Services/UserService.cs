@@ -24,7 +24,7 @@ namespace Clinic.Infracstruture.Services
         Task<ApplicationUser> SignInAsync(UserSignIn model);
         Task<IList<String>> GetRolesAsync(ApplicationUser user);
 
-        Task<ApplicationUser> FindAsync(Guid id);
+        Task<ApplicationUser> FindAsync(String id);
         Task<IQueryable<UserRolesVM>> GetAll();
         IQueryable<ApplicationUser> Get(Expression<Func<ApplicationUser, bool>> where);
         IQueryable<ApplicationUser> Get(Expression<Func<ApplicationUser, bool>> where, params Expression<Func<ApplicationUser, object>>[] includes);
@@ -85,14 +85,23 @@ namespace Clinic.Infracstruture.Services
                 {
                     await _roleManager.CreateAsync(new IdentityRole(AppRole.Customer));
                 }
-
                 if (!await _roleManager.RoleExistsAsync(AppRole.Admin))
                 {
                     await _roleManager.CreateAsync(new IdentityRole(AppRole.Admin));
                 }
+                if (!await _roleManager.RoleExistsAsync(AppRole.Dentist))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(AppRole.Dentist));
+                }
+
+
+
                 if (model.IsAdmin)
                 {
                     await _userManager.AddToRoleAsync(user, AppRole.Admin);
+                } else if (model.IsDentist)
+                {
+                    await _userManager.AddToRoleAsync(user, AppRole.Dentist);
                 }
                 else
                 {
@@ -145,9 +154,9 @@ namespace Clinic.Infracstruture.Services
             return await _userRepository.CheckExist(where);
         }
 
-        public async Task<ApplicationUser> FindAsync(Guid id)
+        public async Task<ApplicationUser> FindAsync(String id)
         {
-            return await _userManager.FindByIdAsync(id.ToString());
+            return await _userManager.FindByIdAsync(id);
         }
 
         public IQueryable<ApplicationUser> Get(Expression<Func<ApplicationUser, bool>> where)

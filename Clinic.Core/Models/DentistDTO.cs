@@ -12,6 +12,7 @@ namespace Clinic.Core.Models
         public String LicenseNumber { get; set; }
         public int YearOfExperience { get; set; }
         public String ClinicDentalId { get; set; }
+        public String UserId { get; set; }
     }
 
     public class UpdateDentist
