@@ -185,7 +185,6 @@ namespace Clinic.Infracstructure.Services
             }
             return result;
         }
-    }
 		public IQueryable<Dentist> Get(Expression<Func<Dentist, bool>> where)
 		{
 			return _dentistInfoRepository.Get(where);
