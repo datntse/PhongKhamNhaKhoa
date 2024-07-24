@@ -4,7 +4,9 @@ using Clinic.Infracstructure.Repositories;
 using Clinic.Infracstruture.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Clinic.Infracstructure.Services
@@ -14,7 +16,10 @@ namespace Clinic.Infracstructure.Services
         Task<IQueryable<ClinicDental>> GetAll();
         Task AddAsync(ClinicDental clinic);
         Task<ClinicDental> FindAsync(String id);
-        void Update(ClinicDental x);
+		IQueryable<ClinicDental> Get(Expression<Func<ClinicDental, bool>> where);
+		IQueryable<ClinicDental> Get(Expression<Func<ClinicDental, bool>> where, params Expression<Func<ClinicDental, object>>[] includes);
+		IQueryable<ClinicDental> Get(Expression<Func<ClinicDental, bool>> where, Func<IQueryable<ClinicDental>, IIncludableQueryable<ClinicDental, object>> include = null);
+		void Update(ClinicDental x);
         Task<bool> Remove(String id);
         Task<ClinicDental> CreateClinicDental(ClinicDTO clinicDto);
         Task<IdentityResult> DeleteClinic(String id);
@@ -35,26 +40,42 @@ namespace Clinic.Infracstructure.Services
             _context = context;
         }
 
-        public async Task<IQueryable<ClinicDental>> GetAll()
-        {
-            var listClinic = _clinicRepository.GetAll();
+		public async Task<IQueryable<ClinicDental>> GetAll()
+		{
+			// Ensure that the _clinicRepository.GetAll() method returns an IQueryable<ClinicDental>
+			var listClinic = _clinicRepository.GetAll()
+											  .Include(c => c.User)
+											  .Include(c => c.Appointments)
+											  .Include(c => c.Dentists);
 
-            if (listClinic == null || !listClinic.Any())
-            {
-                return Enumerable.Empty<ClinicDental>().AsQueryable();
-            }
+			if (listClinic == null || !listClinic.Any())
+			{
+				return Enumerable.Empty<ClinicDental>().AsQueryable();
+			}
 
-            return await Task.FromResult(listClinic);
-        }
+			return await Task.FromResult(listClinic);
+		}
 
-        public void Update(ClinicDental x)
+
+		public void Update(ClinicDental x)
         {
             _clinicRepository.Update(x);
         }
         public async Task<ClinicDental> FindAsync(String id)
         {
-            return await _clinicRepository.FindAsync(id);
-        }
+			var clinic = await _clinicRepository.Get(d => d.Id.Equals(id))
+				.Include(d => d.User)
+				.Include(d => d.Appointments)
+                .Include(d => d.Dentists)
+				.FirstOrDefaultAsync();
+
+			if (clinic == null)
+			{
+				throw new KeyNotFoundException("clinic not found.");
+			}
+
+			return clinic;
+		}
         public async Task AddAsync(ClinicDental clinic)
         {
             await _clinicRepository.AddAsync(clinic);
@@ -135,5 +156,20 @@ namespace Clinic.Infracstructure.Services
 
             return IdentityResult.Failed(new IdentityError { Description = "Could not delete dentist." });
         }
-    }
+
+		public IQueryable<ClinicDental> Get(Expression<Func<ClinicDental, bool>> where)
+		{
+			return _clinicRepository.Get(where);
+		}
+
+		public IQueryable<ClinicDental> Get(Expression<Func<ClinicDental, bool>> where, params Expression<Func<ClinicDental, object>>[] includes)
+		{
+			return _clinicRepository.Get(where, includes);
+		}
+
+		public IQueryable<ClinicDental> Get(Expression<Func<ClinicDental, bool>> where, Func<IQueryable<ClinicDental>, IIncludableQueryable<ClinicDental, object>> include = null)
+		{
+			return _clinicRepository.Get(where, include);
+		}
+	}
 }
