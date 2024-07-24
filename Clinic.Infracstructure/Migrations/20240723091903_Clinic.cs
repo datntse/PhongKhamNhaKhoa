@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Clinic.Infracstructure.Migrations
 {
     /// <inheritdoc />
-    public partial class fixAppointmeent : Migration
+    public partial class Clinic : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

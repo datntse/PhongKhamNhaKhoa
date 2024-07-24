@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Clinic.Infracstructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240719090326_fixAppointmeent")]
-    partial class fixAppointmeent
+    [Migration("20240723091903_Clinic")]
+    partial class Clinic
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

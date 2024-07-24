@@ -101,5 +101,14 @@ namespace Clinic.API.Controllers
             return BadRequest();
         }
 
+
+        [HttpGet("getUserRole")]
+        public async Task<IActionResult> GetListUsers()
+        {
+            var result = await _roleService.GetListUsers();
+            return Ok(result);
+
+        }
+
     }
 }

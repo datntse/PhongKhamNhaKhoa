@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Clinic.Infracstruture.Repositories
 {
-    public interface IUserRepository : IBaseRepository<ApplicationUser, Guid>
+    public interface IUserRepository : IBaseRepository<ApplicationUser, String>
     {
 
     }
-    public class UserRepository : BaseRepository<ApplicationUser, Guid>, IUserRepository
+    public class UserRepository : BaseRepository<ApplicationUser, String>, IUserRepository
     {
         public UserRepository(ApplicationDbContext applicationDbContext) : base(applicationDbContext)
         {

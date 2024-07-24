@@ -11,6 +11,9 @@ namespace Clinic.API.Helper
             #region User
             CreateMap<ApplicationUser, UserDTO>().ReverseMap();
             CreateMap<ApplicationUser, UserRolesVM>().ReverseMap();
+
+            CreateMap<UserDTO, DentistSignUp>().ReverseMap(); 
+            CreateMap<DentistDTO, DentistSignUp>().ReverseMap();
             #endregion
         }
     }
