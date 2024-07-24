@@ -24,7 +24,6 @@ namespace Clinic.Infracstruture
             #region entity
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
 
@@ -39,7 +38,6 @@ namespace Clinic.Infracstruture
 
             services.AddScoped<IAppointmentRepository, AppointmentRepository>();
             services.AddScoped<IAppointmentService, AppointmentService>();
-
 
             #endregion
             return services;

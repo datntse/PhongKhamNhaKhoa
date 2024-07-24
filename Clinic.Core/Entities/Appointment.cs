@@ -13,7 +13,7 @@ namespace Clinic.Core.Entities
         [Key]
         public String Id { get; set; }
         public String ClinicId { get; set; }
-        public String CustomerId { get; set; }
+        public String? CustomerId { get; set; }
         public String DentistId { get; set; }
         public DateTime StartAt { get; set; }
         public DateTime EndAt { get; set; }

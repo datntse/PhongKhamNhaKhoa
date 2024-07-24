@@ -1,4 +1,5 @@
-﻿using Clinic.Core.Constants;
+﻿using AutoMapper;
+using Clinic.Core.Constants;
 using Clinic.Core.Entities;
 using Clinic.Core.Models;
 using Clinic.Infracstructure.Repositories;
@@ -24,17 +25,20 @@ namespace Clinic.Infracstructure.Services
         private IClinicDentalsRepository _clinicRepository;
         private IDentistInfoRepository _dentistRepository;
         private IUnitOfWork _unitOfWork;
+        private IMapper _mapper;
 
         public AppointmentService(
             IAppointmentRepository appointmentRepository,
             IClinicDentalsRepository clinicRepository,
             IDentistInfoRepository dentistRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IMapper mapper)
         {
             _appointmentRepository = appointmentRepository;
             _clinicRepository = clinicRepository;
             _dentistRepository = dentistRepository;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<Appointment>> GetAppointmentsByUserId(string userId)
@@ -65,19 +69,8 @@ namespace Clinic.Infracstructure.Services
             {
                 throw new Exception("The requested appointment time is not available.");
             }
-
-            var appointment = new Appointment
-            {
-                Id = Guid.NewGuid().ToString(),
-                ClinicId = appointmentDto.ClinicId,
-                CustomerId = appointmentDto.CustomerId,
-                DentistId = appointmentDto.DentistId,
-                StartAt = appointmentDto.StartAt,
-                Type = appointmentDto.Type,
-                PeriodicInterval = appointmentDto.PeriodicInterval,
-                Status = (int)AppointmentStatus.Pending,
-                CreateAt = DateTime.UtcNow
-            };
+            var appointment = _mapper.Map<Appointment>(appointmentDto);
+            appointment.Status = (int)AppointmentStatus.Booked;
 
             await _appointmentRepository.AddAsync(appointment);
             await _unitOfWork.SaveChangeAsync();
@@ -125,17 +118,18 @@ namespace Clinic.Infracstructure.Services
             return true;
         }
 
+        // cho phép đăng kí trùng lịch dựa trên số bệnh nhân trên mỗi slot.
         private async Task<bool> IsAppointmentTimeAvailable(DateTime date, string clinicId, string dentistId)
         {
-            //var existingAppointments = await _appointmentRepository.GetAll()
-            //    .Where(a => a.ClinicId == clinicId && a.DentistId == dentistId && a.StartAt == date)
-            //    .CountAsync();
+            var existingAppointments = await _appointmentRepository.GetAll()
+                .Where(a => a.ClinicId == clinicId && a.DentistId == dentistId && a.StartAt == date)
+                .CountAsync();
 
-            //var clinic = await _clinicRepository.FindAsync(clinicId);
-            //if (existingAppointments >= clinic.MaxPatientsPerSlot)
-            //{
-            //    return false;
-            //}
+            var clinic = await _clinicRepository.FindAsync(clinicId);
+            if (existingAppointments >= clinic.MaxPatientsPerSlot)
+            {
+                return false;
+            }
 
             return true;
         }

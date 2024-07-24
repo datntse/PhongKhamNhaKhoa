@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Clinic.API.Services;
 using Clinic.Core.Entities;
+using Clinic.Infracstructure.Repositories;
 using Clinic.Infracstructure.Services;
 using Clinic.Infracstruture.Data;
 using Clinic.Infracstruture.Services;
@@ -18,15 +19,20 @@ namespace Clinic.API.Controllers
     {
         private readonly IUserService _userService;
         private readonly IRoleService _roleService;
+        private readonly IAppointmentService _appointmentService;
         private readonly ICurrentUserService _currentUserService;
         private readonly IJwtTokenService _jwtTokenService;
 
-        public AdminController(IJwtTokenService jwtTokenService, IUserService userService, ICurrentUserService currentUserService,
-            IRoleService roleService)
+        public AdminController(IJwtTokenService jwtTokenService, 
+            IUserService userService,
+            ICurrentUserService currentUserService,
+            IRoleService roleService,
+            IAppointmentService appointmentService)
         {
             _jwtTokenService = jwtTokenService;
             _userService = userService;
             _roleService = roleService;
+            _appointmentService = appointmentService;
             _currentUserService = currentUserService;
 
         }
