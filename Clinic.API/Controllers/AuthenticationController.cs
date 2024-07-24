@@ -3,9 +3,7 @@ using Clinic.Core.Constants;
 using Clinic.Core.Models;
 using Clinic.Infracstruture.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 
 namespace Clinic.API.Controllers

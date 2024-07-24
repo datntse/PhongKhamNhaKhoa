@@ -14,6 +14,7 @@ using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 
 namespace Clinic.Infracstruture.Services
@@ -31,6 +32,7 @@ namespace Clinic.Infracstruture.Services
         IQueryable<ApplicationUser> Get(Expression<Func<ApplicationUser, bool>> where, Func<IQueryable<ApplicationUser>, IIncludableQueryable<ApplicationUser, object>> include = null);
         Task<Message> AddAsync(UserDTO user);
         void Update(ApplicationUser user);
+        Task Remove(Expression<Func<ApplicationUser, bool>> where);
         Task<bool> CheckExist(Expression<Func<ApplicationUser, bool>> where);
         Task<bool> SaveChangeAsync();
     }
@@ -182,6 +184,11 @@ namespace Clinic.Infracstruture.Services
         public void Update(ApplicationUser user)
         {
             _userRepository.Update(user);
+        }
+
+        public async Task Remove(Expression<Func<ApplicationUser, bool>> where)
+        {
+            _userRepository.Remove(where);
         }
 
         public async Task<IList<string>> GetRolesAsync(ApplicationUser user)
