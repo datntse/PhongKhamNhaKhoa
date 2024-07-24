@@ -1,6 +1,7 @@
 ﻿using Clinic.Core.Entities;
 using Clinic.Infracstructure.Services;
 using Clinic.Infracstruture.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq.Expressions;
@@ -9,6 +10,7 @@ namespace Clinic.API.Controllers
 {
     [Route("api/profile")]
     [ApiController]
+    [Authorize]
     public class UserProfileController : Controller
     {
         private readonly IUserService _userService;
@@ -19,9 +21,9 @@ namespace Clinic.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var result = _userService.GetAll();
+            var result = await _userService.GetAll();
             return Ok(result);
         }
 
