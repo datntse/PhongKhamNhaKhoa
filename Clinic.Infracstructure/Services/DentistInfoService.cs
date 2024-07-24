@@ -1,8 +1,10 @@
-﻿using Clinic.Core.Entities;
+﻿using AutoMapper;
+using Clinic.Core.Entities;
 using Clinic.Core.Models;
 using Clinic.Infracstructure.Repositories;
 using Clinic.Infracstruture.Data;
 using Clinic.Infracstruture.Repositories;
+using Clinic.Infracstruture.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
@@ -29,19 +31,22 @@ namespace Clinic.Infracstructure.Services
         Task<IdentityResult> DeleteDentist(String id);
 
         Task UpdateDentistInfo(String id, UpdateDentist updateDentist);
+        Task<IdentityResult> DentistSignUp(DentistSignUp dentistSignUp);
     }
     public class DentistInfoService : IDentistInfoService
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IMapper _mapper;
+        private readonly IUserService _userService;
         private readonly IDentistInfoRepository _dentistInfoRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IClinicDentalsRepository _clinicDentalsRepository;
 
         public DentistInfoService(IDentistInfoRepository dentistInfoRepository, 
             IUnitOfWork unitOfWork, IClinicDentalsRepository clinicDentalsRepository,
-            IUserRepository userRepository)
+            IUserService userService, IMapper mapper)
         {
-            _userRepository = userRepository;
+            _mapper = mapper;
+            _userService = userService;
             _dentistInfoRepository = dentistInfoRepository;
             _unitOfWork = unitOfWork;
             _clinicDentalsRepository = clinicDentalsRepository;
@@ -71,10 +76,10 @@ namespace Clinic.Infracstructure.Services
                 ClinicDentalId = dentistDTO.ClinicDentalId
             };
 
-            var dentistUser = await _userRepository.FindAsync(dentistDTO.UserId);
+            var dentistUser = await _userService.FindAsync(dentistDTO.UserId);
             dentistUser.Dentist = dentist;
 
-             _userRepository.Update(dentistUser);
+            _userService.Update(dentistUser);
 
             await _dentistInfoRepository.AddAsync(dentist);
             await _unitOfWork.SaveChangeAsync();
@@ -162,6 +167,24 @@ namespace Clinic.Infracstructure.Services
             return IdentityResult.Failed(new IdentityError { Description = "Could not delete dentist." });
         }
 
+        public async Task<IdentityResult> DentistSignUp(DentistSignUp dentistSignUp)
+        {
+            var userDTO = _mapper.Map<UserDTO>(dentistSignUp);
+            var dentistDTO = _mapper.Map<DentistDTO>(dentistSignUp);
+
+
+            var result = await  _userService.SignUpAsync(userDTO);
+            if(result.Succeeded)
+            {
+                var userSignined = _userService.Get(_ => _.Email.Equals(userDTO.Email)).FirstOrDefault();   
+                if(userSignined != null)
+                {
+                    dentistDTO.UserId = userSignined.Id;
+                    var dentistId = await CreateDentistInfo(dentistDTO);
+                }
+            }
+            return result;
+        }
 		public IQueryable<Dentist> Get(Expression<Func<Dentist, bool>> where)
 		{
 			return _dentistInfoRepository.Get(where);

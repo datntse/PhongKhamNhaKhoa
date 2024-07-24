@@ -40,15 +40,15 @@ namespace Clinic.API.Controllers
 
         // POST: api/Dentists
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] DentistDTO dentistDTO)
+        public async Task<IActionResult> Create([FromBody] DentistSignUp dentistDTO)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var dentist = await _dentistInfoService.CreateDentistInfo(dentistDTO);
-            return CreatedAtAction(nameof(GetById), new { id = dentist.Id }, dentist);
+            var result = await _dentistInfoService.DentistSignUp(dentistDTO);
+            return Ok(result);
         }
 
         // PUT: api/Dentists/{id}
