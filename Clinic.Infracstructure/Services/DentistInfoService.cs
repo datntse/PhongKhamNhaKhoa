@@ -35,19 +35,6 @@ namespace Clinic.Infracstructure.Services
         Task UpdateDentistInfo(String id, UpdateDentist updateDentist);
         Task<IdentityResult> DentistSignUp(DentistSignUp dentistSignUp);
         Task<Appointment> RegisterAppointment(AppointmentDTO appointmentDTO);
-        Task<List<Appointment>> GetAllAppointmentByStatus(int status);
-        Task<List<Appointment>> GetAllAppointmentByDate(DateTime dateTime);
-
-        Task<List<Appointment>> GetAllDentistAppointmentByStatus(int status, string dentitstId);
-        Task<List<Appointment>> GetAllDentistAppointmentByDate(DateTime dateTime, string dentistId);
-
-        Task<List<Appointment>> GetAllDentistAppointmentAvailableByDate(DateTime dateTime, string dentistId);
-
-
-        Task<Appointment> ApproveAppointment(string appoinmentId);
-        Task<Appointment> RejectAppointment(string appoinmentId);
-
-
 
     }
     public class DentistInfoService : IDentistInfoService
@@ -233,6 +220,7 @@ namespace Clinic.Infracstructure.Services
             }
             var appointment = _mapper.Map<Appointment>(appointmentDTO);
             appointment.Status = (int)AppointmentStatus.Pending;
+            appointment.Id = Guid.NewGuid().ToString();
 
             await _appointmentRepository.AddAsync(appointment);
             await _unitOfWork.SaveChangeAsync();
@@ -254,79 +242,6 @@ namespace Clinic.Infracstructure.Services
             }
 
             return true;
-        }
-
-
-        public async Task<List<Appointment>> GetAllAppointmentByStatus(int status)
-        {
-            return await _appointmentRepository.Get(_ => _.Status == status).ToListAsync();
-        }
-
-        public async Task<List<Appointment>> GetAllAppointmentByStatus(int status, string dentistId)
-        {
-            return await _appointmentRepository.Get(_ => _.Status == status
-            && _.DentistId.Equals(dentistId)).ToListAsync();
-        }
-
-        public async Task<List<Appointment>> GetAllAppointmentByDate(DateTime dateTime)
-        {
-            // Normalize the date to remove time part
-            var normalizedDate = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day);
-
-            var apointments = await _appointmentRepository.GetAll()
-                .Where(a => a.StartAt >= normalizedDate && a.StartAt < normalizedDate.AddDays(1))
-                .ToListAsync();
-
-            return apointments;
-        }
-
-        public async Task<List<Appointment>> GetAllDentistAppointmentByStatus(int status, string dentitstId)
-        {
-            return await _appointmentRepository.Get(_ => _.Status == status && _.DentistId.Equals(dentitstId)).ToListAsync();
-        }
-
-        public async Task<List<Appointment>> GetAllDentistAppointmentByDate(DateTime dateTime, string dentistId)
-        {
-            // Normalize the date to remove time part
-            var normalizedDate = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day);
-
-            var apointments = await _appointmentRepository.GetAll()
-                .Where(a => a.StartAt >= normalizedDate && a.StartAt < normalizedDate.AddDays(1))
-                .ToListAsync();
-
-            return apointments;
-        }
-
-        public async Task<Appointment> ApproveAppointment(string appoinmentId)
-        {
-            var appointment = await _appointmentRepository.FindAsync(appoinmentId);
-            appointment.Status = (int)AppointmentStatus.Approve;
-            _appointmentRepository.Update(appointment);
-            await _unitOfWork.SaveChangeAsync();
-            return appointment;
-        }
-
-        public async Task<Appointment> RejectAppointment(string appoinmentId)
-        {
-            var appointment = await _appointmentRepository.FindAsync(appoinmentId);
-            appointment.Status = (int)AppointmentStatus.Reject;
-            _appointmentRepository.Update(appointment);
-            await _unitOfWork.SaveChangeAsync();
-            return appointment;
-        }
-
-        public Task<List<Dentist>> GetAllDentistAppointmentAvailableByDate(DateTime dateTime)
-        {
-            // get danh sahc cac bac si co ngay trong hom nay
-            var normalizedDate = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day);
-
-            var dentists = await _appointmentRepository.Get()
-                .Where(a => a.StartAt >= normalizedDate && a.StartAt < normalizedDate.AddDays(1))
-                .Select(a => a.Dentist)
-                .Distinct()
-                .ToListAsync();
-
-            return Ok(dentists);
         }
     }
 }

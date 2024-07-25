@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Clinic.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/dentist")]
     [ApiController]
     public class DentistsController : ControllerBase
     {
@@ -39,7 +39,7 @@ namespace Clinic.API.Controllers
         }
 
         // POST: api/Dentists
-        [HttpPost]
+        [HttpPost("dentistSignup")]
         public async Task<IActionResult> Create([FromBody] DentistSignUp dentistDTO)
         {
             if (!ModelState.IsValid)
@@ -83,5 +83,14 @@ namespace Clinic.API.Controllers
 
             return BadRequest(result.Errors);
         }
-    }
+
+        [HttpPost("registerAppointment")]
+        public async Task<IActionResult> RegisterAppointment([FromBody] AppointmentDTO appointmentDTO)
+        {
+            var result = await _dentistInfoService.RegisterAppointment(appointmentDTO);
+            return Ok(result);
+        }
+
+
+     }
 }

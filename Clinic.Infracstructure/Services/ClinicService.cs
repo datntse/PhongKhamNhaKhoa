@@ -69,7 +69,7 @@ namespace Clinic.Infracstructure.Services
 
         public async Task Remove(Expression<Func<ClinicDental, bool>> where)
         {
-            _clinicRepository.Remove(where);
+           await _clinicRepository.Remove(where);
         }
     }
 }

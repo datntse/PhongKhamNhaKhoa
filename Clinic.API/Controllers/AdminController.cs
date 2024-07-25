@@ -116,5 +116,36 @@ namespace Clinic.API.Controllers
 
         }
 
+        [HttpGet("getAllAppointment/{status}")]
+        public async Task<IActionResult> GetAllAppointment(int status = 0)
+        {
+            var result = await _appointmentService.GetAllAppointmentByStatus(status);
+            return Ok(result);
+        }
+
+        [HttpGet("getAllDentistAppointment/{status}")]
+        public async Task<IActionResult> GetAllDentitstAppointment(string dentistId, int status = 0)
+        {
+            var result = await _appointmentService.GetAllDentistAppointmentByStatus(status, dentistId);
+            return Ok(result);
+        }
+
+
+
+        [HttpGet("approveAppointment/{appointmentId}")]
+        public async Task<IActionResult> ApproveAppointment(string appointmentId)
+        {
+            var result = await _appointmentService.ApproveAppointment(appointmentId);
+            return Ok(result);
+        }
+
+        [HttpGet("rejectAppointment/{appointmentId}")]
+        public async Task<IActionResult> rejectAppointment(string appointmentId)
+        {
+            var result = await _appointmentService.RejectAppointment(appointmentId);
+            return Ok(result);
+        }
+
+
     }
 }
