@@ -87,9 +87,9 @@ namespace Clinic.Infracstructure.Services
         }
         public async Task<ClinicDental> CreateClinicDental(ClinicDTO clinicDto)
         {
-            var checkClinic = _clinicRepository.GetAll().ToList();
-            bool exist = checkClinic.Any(c=>c.Address == clinicDto.Address || c.Name == clinicDto.Name);
-            if(exist)
+            var clinics = _clinicRepository.GetAll().ToList();
+            var checkClinicDuplicated = clinics.FirstOrDefault(c=>c.Address == clinicDto.Address || c.Name == clinicDto.Name);
+            if(checkClinicDuplicated != null)
             {
                 throw new InvalidOperationException("A clinic with the same name or address already exists.");
             }

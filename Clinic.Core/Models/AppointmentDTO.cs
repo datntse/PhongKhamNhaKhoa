@@ -9,7 +9,7 @@ namespace Clinic.Core.Models
     public class AppointmentDTO
     {
         public String ClinicId { get; set; }
-        public String CustomerId { get; set; }
+        public String? CustomerId { get; set; }
         public String DentistId { get; set; }
         public DateTime StartAt { get; set; }
         public DateTime EndAt { get; set; }
@@ -17,5 +17,11 @@ namespace Clinic.Core.Models
         public String Note { get; set; }    
         public int PeriodicInterval { get; set; }
         public int Status { get; set; }
+    }
+
+    public class BookAppointment
+    {
+        public string CustomerId { get; set; }
+        public string AppointmentId { get; set; }
     }
 }

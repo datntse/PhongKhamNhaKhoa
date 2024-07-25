@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Clinic.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/clinic")]
     [ApiController]
     public class ClinicDentalsController : ControllerBase
     {

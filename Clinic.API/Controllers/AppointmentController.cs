@@ -51,12 +51,12 @@ namespace Clinic.API.Controllers
             }
         }
 
-        [HttpPost("create")]
-        public async Task<IActionResult> CreateAppointment(AppointmentDTO appointmentDto)
+        [HttpPost("bookAppointment")]
+        public async Task<IActionResult> CreateAppointment(BookAppointment BookAppointment)
         {
             try
             {
-                var appointment = await _appointmentService.CreateAppointment(appointmentDto);
+                var appointment = await _appointmentService.BookAppointment(BookAppointment);
                 return CreatedAtAction(nameof(GetAppointmentById), new { id = appointment.Id }, appointment);
             }
             catch (Exception ex)
@@ -102,6 +102,34 @@ namespace Clinic.API.Controllers
                 // Log the error
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error deleting appointment.");
             }
+        }
+
+
+        [HttpGet("getCustomerAppointment/{customerId}")]
+        public async Task<IActionResult> GetAllDentitstAppointment(string customerId)
+        {
+            var result = await _appointmentService.GetAll_CustomerAppointmentById(customerId);
+            return Ok(result);
+        }
+        [HttpGet("getCustomerAppointmentByDate/{customerId}")]
+        public async Task<IActionResult> GetCustomerAppointmentByDate(string customerId, DateTime dateTime)
+        {
+            var result = await _appointmentService.GetAll_CustomerAppointmentByDate(dateTime, customerId);
+            return Ok(result);
+        }
+
+        [HttpGet("getAllDentistAppointmentByDate")]
+        public async Task<IActionResult> GetAllDentitstPointmentByDate(string dentistId, DateTime datetime, int status = 0)
+        {
+            var result = await _appointmentService.GetAll_DentistAppointmentByDate(datetime, status, dentistId);
+            return Ok(result);
+        }
+
+        [HttpGet("getAllDentistAppointmentStatus/{dentistId}")]
+        public async Task<IActionResult> GetAllDentitstAppointment(string dentistId, int status = 0)
+        {
+            var result = await _appointmentService.GetAll_AppointmentOfDentistById(dentistId, status);
+            return Ok(result);
         }
     }
 }

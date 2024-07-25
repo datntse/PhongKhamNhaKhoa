@@ -7,14 +7,17 @@ using System.Threading.Tasks;
 
 namespace Clinic.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/dentist")]
     [ApiController]
     public class DentistsController : ControllerBase
     {
+        private readonly IAppointmentService _appointmentService;
         private readonly IDentistInfoService _dentistInfoService;
 
-        public DentistsController(IDentistInfoService dentistInfoService)
+        public DentistsController(IDentistInfoService dentistInfoService,
+            IAppointmentService appointmentService)
         {
+            _appointmentService = appointmentService;
             _dentistInfoService = dentistInfoService;
         }
 
@@ -39,7 +42,7 @@ namespace Clinic.API.Controllers
         }
 
         // POST: api/Dentists
-        [HttpPost]
+        [HttpPost("dentistSignup")]
         public async Task<IActionResult> Create([FromBody] DentistSignUp dentistDTO)
         {
             if (!ModelState.IsValid)
@@ -83,5 +86,45 @@ namespace Clinic.API.Controllers
 
             return BadRequest(result.Errors);
         }
+
+        [HttpPost("registerAppointment")]
+        public async Task<IActionResult> RegisterAppointment([FromBody] AppointmentDTO appointmentDTO)
+        {
+            var result = await _dentistInfoService.RegisterAppointment(appointmentDTO);
+            return Ok(result);
+        }
+
+
+        [HttpGet("getAllDentistAppointByDate")]
+        public async Task<IActionResult> GetAllDentitstPointmentByDate(string dentistId, DateTime datetime, int status = 0)
+        {
+            var result = await _appointmentService.GetAll_DentistAppointmentByDate(datetime, status, dentistId);
+            return Ok(result);
+        }
+
+        [HttpGet("getAllDentistAppoint")]
+        public async Task<IActionResult> GetAllDentitstPointment(string dentistId, int status = 0)
+        {
+            var result = await _appointmentService.GetAll_DentistAppointmentByStatus(status, dentistId);
+            return Ok(result);
+        }
+
+
+        [HttpGet("finishAppointment/{appointmentId}")]
+        public async Task<IActionResult> FinishAppointment(string appointmentId)
+        {
+            var result = await _appointmentService.FinishAppointment(appointmentId);
+            return Ok(result);
+        }
+
+        [HttpGet("cancelAppointment/{appointmentId}")]
+        public async Task<IActionResult> CancelAppointment(string appointmentId)
+        {
+            var result = await _appointmentService.CancelAppointment(appointmentId);
+            return Ok(result);
+        }
+
+
+
     }
 }
