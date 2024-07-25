@@ -162,9 +162,9 @@ namespace Clinic.API.Controllers
         }
 
         [HttpGet("getAllDentistAppointmentByDate")]
-        public async Task<IActionResult> GetAllDentitstPointmentByDate(string dentistId, DateTime datetime)
+        public async Task<IActionResult> GetAllDentitstPointmentByDate(string dentistId, DateTime datetime, int status = 0)
         {
-            var result = await _appointmentService.GetAll_DentistAppointmentByDate(datetime, dentistId);
+            var result = await _appointmentService.GetAll_DentistAppointmentByDate(datetime, status, dentistId);
             return Ok(result);
         }
 
@@ -175,7 +175,7 @@ namespace Clinic.API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("getAllDentistAppointByDate")]
+        [HttpGet("getAllDentistAppointmentByDate/{dentistId}")]
         public async Task<IActionResult> getAllDentistAppointmentByDatetime(string dentistId, DateTime datetime)
         {
             var result = await _appointmentService.GetAll_DentistAppointmentAvailableByDate(datetime, dentistId);
