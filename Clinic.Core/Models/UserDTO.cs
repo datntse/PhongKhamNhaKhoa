@@ -47,6 +47,7 @@ namespace Clinic.Core.Models
         public List<string> RolesName { get; set; }
         public String? DOB { get; set; }
         public String? PhoneNumber { get; set; }
+        public Dentist? Dentist {  get; set; }
         public bool Sex { get; set; }
         public int Status { get; set; } = 1;
     }

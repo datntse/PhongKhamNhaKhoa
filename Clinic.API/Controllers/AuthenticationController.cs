@@ -111,7 +111,9 @@ namespace Clinic.API.Controllers
         [HttpGet("currentUser")]
         public async Task<IActionResult> getCurrentUserId()
         {
-            var user = _currentUserService.GetUser();
+            var user = await _currentUserService.GetUser();
+            var dentist = _userService.Get(x => x.Id == user.Id, x => x.Dentist).First();
+            user.Dentist = dentist.Dentist;
             return Ok(new { user });
         }
 
