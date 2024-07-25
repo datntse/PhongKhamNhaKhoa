@@ -104,7 +104,7 @@ namespace Clinic.API.Controllers
         [HttpGet("profile/id")]
         public IActionResult GetProfile(string id)
         {
-            var result = _userService.Get(_ => _.Id.Equals(id));
+            var result = _userService.Get(_ => _.Id.Equals(id), x => x.Dentist);
             return Ok(result);
         }
 
