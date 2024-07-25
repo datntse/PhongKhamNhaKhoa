@@ -14,5 +14,6 @@ namespace Clinic.Core.Constants
         public const int Booked = 3;
         public const int Cancel = 4;
         public const int Finish = 5;
+        public const int All = 6;
     }
 }

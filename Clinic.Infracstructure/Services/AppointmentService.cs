@@ -6,6 +6,7 @@ using Clinic.Infracstructure.Repositories;
 using Clinic.Infracstruture.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using System;
 using System.Linq.Expressions;
 
 namespace Clinic.Infracstructure.Services
@@ -30,14 +31,23 @@ namespace Clinic.Infracstructure.Services
 
         Task<List<Appointment>> GetAllAppointmentByStatus(int status);
         Task<List<Appointment>> GetAllAppointmentByDate(DateTime dateTime);
-
-        Task<List<Appointment>> GetAllDentistAppointmentByStatus(int status, string dentitstId);
-        Task<List<Appointment>> GetAllDentistAppointmentByDate(DateTime dateTime, string dentistId);
-
-        Task<List<Appointment>> GetAllDentistAppointmentAvailableByDate(DateTime dateTime, string dentistId);
-
+        Task<List<Appointment>> GetAll_AppointmentOfDentistById(string dentistId, int status);
+        Task<List<Appointment>> GetAll_DentistAppointmentByStatus(int status, string dentitstId);
+        Task<List<Appointment>> GetAll_DentistAppointmentByDate(DateTime dateTime, string dentistId);
+        Task<List<Dentist>> GetAllDentist_HaveAppointmentAvailableByDate(DateTime dateTime);
+        Task<List<Appointment>> GetAll_DentistAppointmentAvailableByDate(DateTime dateTime, string dentistId);
         Task<Appointment> ApproveAppointment(string appoinmentId);
         Task<Appointment> RejectAppointment(string appoinmentId);
+
+        Task<Appointment> CanceltAppointment(string appoinmentId);
+        Task<Appointment> FinishAppointment(string appoinmentId);
+
+        Task<List<Appointment>> GetAll_CustomerAppointmentById(string customerId);
+        Task<List<Appointment>> GetAll_CustomerAppointmentByDate(DateTime dateTime, string customerId);
+
+        Task<Appointment> BookAppointment(BookAppointment bookAppointment);
+
+
 
     }
     public class AppointmentService : IAppointmentService
@@ -215,18 +225,19 @@ namespace Clinic.Infracstructure.Services
             return apointments;
         }
 
-        public async Task<List<Appointment>> GetAllDentistAppointmentByStatus(int status, string dentitstId)
+        public async Task<List<Appointment>> GetAll_DentistAppointmentByStatus(int status, string dentitstId)
         {
             return await _appointmentRepository.Get(_ => _.Status == status && _.DentistId.Equals(dentitstId)).ToListAsync();
         }
 
-        public async Task<List<Appointment>> GetAllDentistAppointmentByDate(DateTime dateTime, string dentistId)
+        public async Task<List<Appointment>> GetAll_DentistAppointmentByDate(DateTime dateTime, string dentistId)
         {
             // Normalize the date to remove time part
             var normalizedDate = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day);
 
             var apointments = await _appointmentRepository.GetAll()
-                .Where(a => a.StartAt >= normalizedDate && a.StartAt < normalizedDate.AddDays(1))
+                .Where(a => a.StartAt >= normalizedDate && a.StartAt < normalizedDate.AddDays(1)
+                && a.DentistId.Equals(dentistId))
                 .ToListAsync();
 
             return apointments;
@@ -250,7 +261,7 @@ namespace Clinic.Infracstructure.Services
             return appointment;
         }
 
-        public async Task<List<Dentist>> GetAllDentistAppointmentAvailableByDate(DateTime dateTime)
+        public async Task<List<Dentist>> GetAllDentist_HaveAppointmentAvailableByDate(DateTime dateTime)
         {
             // get danh sahc cac bac si co ngay trong hom nay
             var normalizedDate = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day);
@@ -263,16 +274,92 @@ namespace Clinic.Infracstructure.Services
             return dentists;
         }
 
-        public async Task<List<Appointment>> GetAllDentistAppointmentAvailableByDate(DateTime dateTime, string dentistId)
+        public async Task<List<Appointment>> GetAll_DentistAppointmentAvailableByDate(DateTime dateTime, string dentistId)
         {
             // get danh sahc cac bac si co ngay trong hom nay
             var normalizedDate = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day);
 
-            var dentists = await _appointmentRepository.Get(_ => _.Status == (int)AppointmentStatus.Approve, null, _ => _.Dentist)
+            var appointments = await _appointmentRepository.Get(_ => _.Status == (int)AppointmentStatus.Approve)
                 .Where(a => a.StartAt >= normalizedDate && a.StartAt < normalizedDate.AddDays(1) && a.DentistId.Equals(dentistId))
                 .Distinct()
                 .ToListAsync();
-            return dentists;
+            return appointments;
+        }
+
+        public async Task<List<Appointment>> GetAll_AppointmentOfDentistById(string dentistId, int status)
+        {
+            if (status != (int)AppointmentStatus.All)
+            {
+                var appointments = await _appointmentRepository.Get(_ => _.Status == status)
+             .Where(_ => _.DentistId.Equals(dentistId))
+             .Distinct()
+             .ToListAsync();
+
+                return appointments;
+            }
+            else
+            {
+                var appointments = await _appointmentRepository.Get(_ => _.DentistId.Equals(dentistId))
+            .Distinct()
+            .ToListAsync();
+
+                return appointments;
+            }
+
+        }
+
+        public async Task<List<Appointment>> GetAll_CustomerAppointmentById(string customerId)
+        {
+            // get danh sahc cac bac si co ngay trong hom nay
+            var appointments = await _appointmentRepository.Get(_ => _.Status == (int)AppointmentStatus.Approve 
+                && _.CustomerId.Equals(customerId))
+                .Distinct()
+                .ToListAsync();
+            return appointments;
+        }
+
+        public async Task<List<Appointment>> GetAll_CustomerAppointmentByDate(DateTime dateTime, string customerId)
+        {
+            // get danh sahc cac bac si co ngay trong hom nay
+            var normalizedDate = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day);
+
+            var appointments = await _appointmentRepository.Get(_ => _.Status == (int)AppointmentStatus.Approve)
+                .Where(a => a.StartAt >= normalizedDate && a.StartAt < normalizedDate.AddDays(1) && a.CustomerId.Equals(customerId))
+                .Distinct()
+                .ToListAsync();
+            return appointments;
+        }
+
+        public async Task<Appointment> CanceltAppointment(string appoinmentId)
+        {
+            var appointment = await _appointmentRepository.FindAsync(appoinmentId);
+            appointment.Status = (int)AppointmentStatus.Cancel;
+            _appointmentRepository.Update(appointment);
+            await _unitOfWork.SaveChangeAsync();
+            return appointment;
+        }
+
+        public async Task<Appointment> FinishAppointment(string appoinmentId)
+        {
+            var appointment = await _appointmentRepository.FindAsync(appoinmentId);
+            appointment.Status = (int)AppointmentStatus.Finish;
+            _appointmentRepository.Update(appointment);
+            await _unitOfWork.SaveChangeAsync();
+            return appointment;
+        }
+
+        public async Task<Appointment> BookAppointment(BookAppointment bookAppointment)
+        {
+            if(bookAppointment.AppointmentId != null)
+            {
+                var appointment = await _appointmentRepository.FindAsync(bookAppointment.AppointmentId);
+                appointment.Status = (int)AppointmentStatus.Booked;
+                appointment.CustomerId = bookAppointment.CustomerId;
+                _appointmentRepository.Update(appointment);
+                await _unitOfWork.SaveChangeAsync();
+                return appointment;
+            }
+            return null;
         }
     }
 }

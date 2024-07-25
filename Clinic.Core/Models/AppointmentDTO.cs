@@ -18,4 +18,10 @@ namespace Clinic.Core.Models
         public int PeriodicInterval { get; set; }
         public int Status { get; set; }
     }
+
+    public class BookAppointment
+    {
+        public string CustomerId { get; set; }
+        public string AppointmentId { get; set; }
+    }
 }
